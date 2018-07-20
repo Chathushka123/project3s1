@@ -8,9 +8,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.FrameLayout;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static String TAG = "MainActivity";
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -19,8 +22,9 @@ public class MainActivity extends AppCompatActivity {
         Camera c = null;
         try {
             c = Camera.open();
+        } catch (Exception e) {
+            Log.w(TAG, "getCameraInstance", e);
         }
-        catch (Exception e) {}
         return c;
     }
 
@@ -30,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
         {
+            /* try for camera permissions */
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.CAMERA))
             {
@@ -38,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{Manifest.permission.CAMERA},
                         MY_PERMISSIONS_REQUEST_CAMERA);
             }
+        } else {
+            /* permission is already granted for the camera */
+            mCamera = getCameraInstance();
         }
     }
 
@@ -50,11 +58,13 @@ public class MainActivity extends AppCompatActivity {
     {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CAMERA:
-                // result array is empty => request is cancelled
+                /* result array is empty => request is cancelled */
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     mCamera = getCameraInstance();
+                } else {
+                    /* permission is denied by user */
                 }
         }
     }
@@ -65,8 +75,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         grantCameraPermissions();
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+        if (mCamera != null) {
+            mPreview = new CameraPreview(this, mCamera);
+            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+        }
     }
 }
