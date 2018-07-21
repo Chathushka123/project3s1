@@ -3,11 +3,11 @@ package com.example.project3s1;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -76,9 +76,10 @@ public class MainActivity extends AppCompatActivity {
         /* !!! this shouldn't be the way fullscreen mode is handled !!! */
         /* remove title */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        /* go full screen */
+        /* go fullscreen */
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        this.setTitle(stringFromJNI());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -89,5 +90,11 @@ public class MainActivity extends AppCompatActivity {
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
         }
+    }
+
+    public native String stringFromJNI();
+
+    static {
+        System.loadLibrary("native-lib");
     }
 }
