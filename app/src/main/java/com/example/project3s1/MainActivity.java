@@ -5,13 +5,12 @@ import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +18,46 @@ public class MainActivity extends AppCompatActivity {
 
     private Camera mCamera;
     private CameraPreview mPreview;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
+
+    public native String stringFromJNI();
+
+    static {
+        System.loadLibrary("native-lib");
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        grantCameraPermissions();
+        if (mCamera != null) {
+            mCamera.setDisplayOrientation(90);
+            mPreview = new CameraPreview(this, mCamera);
+            ConstraintLayout preview = (ConstraintLayout) findViewById(R.id.camera_preview);
+            preview.addView(mPreview);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            hideSystemUI();
+        }
+    }
+
+    private void hideSystemUI() {
+        View decorView = getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                  View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN);
+    }
 
     public static Camera getCameraInstance() {
         Camera c = null;
@@ -29,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
         }
         return c;
     }
-
-    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
 
     private void grantCameraPermissions() {
         if (ContextCompat.checkSelfPermission(this,
@@ -69,32 +106,5 @@ public class MainActivity extends AppCompatActivity {
                     /* permission is denied by user */
                 }
         }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        /* !!! this shouldn't be the way fullscreen mode is handled !!! */
-        /* remove title */
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        /* go fullscreen */
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        this.setTitle(stringFromJNI());
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        grantCameraPermissions();
-        if (mCamera != null) {
-            mCamera.setDisplayOrientation(90);
-            mPreview = new CameraPreview(this, mCamera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            preview.addView(mPreview);
-        }
-    }
-
-    public native String stringFromJNI();
-
-    static {
-        System.loadLibrary("native-lib");
     }
 }
