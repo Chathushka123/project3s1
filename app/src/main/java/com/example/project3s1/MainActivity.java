@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadCameraView() {
-        mCamera.setDisplayOrientation(90);
+        mCamera.setDisplayOrientation(270);
         mPreview = new CameraPreview(this, mCamera);
         ConstraintLayout preview = (ConstraintLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
