@@ -33,11 +33,16 @@ public class MainActivity extends AppCompatActivity {
 
         grantCameraPermissions();
         if (mCamera != null) {
-            mCamera.setDisplayOrientation(90);
-            mPreview = new CameraPreview(this, mCamera);
-            ConstraintLayout preview = (ConstraintLayout) findViewById(R.id.camera_preview);
-            preview.addView(mPreview);
+            loadCameraView();
         }
+    }
+
+    private void loadCameraView() {
+        mCamera.setDisplayOrientation(90);
+        mPreview = new CameraPreview(this, mCamera);
+        ConstraintLayout preview = (ConstraintLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview);
+
     }
 
     @Override
@@ -102,9 +107,11 @@ public class MainActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
                     mCamera = getCameraInstance();
+                    loadCameraView();
                 } else {
                     /* permission is denied by user */
                 }
         }
     }
+
 }
