@@ -37,6 +37,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
+
+    public void releaseCamera() {
+        if(mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
     private void loadCameraView() {
         mCamera.setDisplayOrientation(270);
         mPreview = new CameraPreview(this, mCamera);
