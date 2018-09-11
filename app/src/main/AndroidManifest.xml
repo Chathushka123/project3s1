@@ -4,9 +4,11 @@
 
     <!-- Request camera permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
 
     <!-- Prevent installation on no camera devices -->
     <uses-feature android:name="android.hardware.camera" />
+
 
     <application
         android:allowBackup="true"

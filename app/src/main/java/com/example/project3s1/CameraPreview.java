@@ -1,6 +1,7 @@
 package com.example.project3s1;
 
 import android.content.Context;
+import android.graphics.Picture;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -15,6 +16,8 @@ public class CameraPreview extends SurfaceView implements
         Camera.PreviewCallback {
     private SurfaceHolder mHolder;
 
+    private Camera.PictureCallback pictureCallback;
+
     private Camera mCamera;
 
     public CameraPreview(Context context, Camera camera) {
@@ -22,7 +25,7 @@ public class CameraPreview extends SurfaceView implements
         mCamera = camera;
         mHolder = getHolder();
         mHolder.addCallback(this);
-    }
+}
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
@@ -62,8 +65,8 @@ public class CameraPreview extends SurfaceView implements
 
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
-        for (byte b : data) {
-            Log.d("MainActivity","frame: " + b);
-        }
+
     }
+
+
 }
