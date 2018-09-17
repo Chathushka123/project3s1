@@ -1,8 +1,14 @@
-#include <string.h>
 #include <jni.h>
 
-JNIEXPORT jstring JNICALL
-Java_com_example_project3s1_MainActivity_stringFromJNI(JNIEnv* env, jobject thiz)
+JNIEXPORT jint JNICALL
+Java_com_example_project3s1_Preview_decodeYUV420sp(JNIEnv* env,
+                                                     jobject obj,
+                                                     jbyteArray yuv420sp)
 {
-    return (*env)->NewStringUTF(env, "Hello from the other side!!!");
+    jbyte tmp[10];
+    jint i, sum = 0;
+    (*env)->GetByteArrayRegion(env, yuv420sp, 0, 10, tmp);
+    for (i = 0; i < 10; i++)
+        sum += tmp[i];
+    return sum;
 }

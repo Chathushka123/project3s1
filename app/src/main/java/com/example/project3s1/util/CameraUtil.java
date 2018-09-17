@@ -3,7 +3,7 @@ package com.example.project3s1.util;
 import android.hardware.Camera;
 import android.util.Log;
 
-import static com.example.project3s1.util.Debug.tag;
+import static com.example.project3s1.util.DebugUtil.tag;
 
 public class CameraUtil
 {

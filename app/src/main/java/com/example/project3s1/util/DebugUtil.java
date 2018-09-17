@@ -1,6 +1,6 @@
 package com.example.project3s1.util;
 
-public class Debug
+public class DebugUtil
 {
     public static String tag(Object o)
     {

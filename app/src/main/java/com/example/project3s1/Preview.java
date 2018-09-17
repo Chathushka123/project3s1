@@ -9,19 +9,26 @@ import com.example.project3s1.util.CameraUtil;
 
 import java.io.IOException;
 
-import static android.hardware.Camera.*;
+import static android.hardware.Camera.PreviewCallback;
 
 public class Preview extends SurfaceView implements SurfaceHolder.Callback
 {
+    static {
+        System.loadLibrary("native-lib");
+    }
+
+    private native int decodeYUV420sp(byte[] yuv420sp);
+
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private DrawOnTop mDrawOnTop;
     boolean mFinished;
 
-    public Preview(Context context, DrawOnTop drawOnTop)
+    public Preview(Context context, DrawOnTop drawOnTop, Camera camera)
     {
         super(context);
 
+        mCamera = camera;
         mDrawOnTop = drawOnTop;
         mFinished = false;
         mHolder = getHolder();
@@ -32,44 +39,47 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
-        mCamera = CameraUtil.getCameraInstance();
-        try {
-            mCamera.setPreviewDisplay(holder);
-            mCamera.setPreviewCallback(new PreviewCallback() {
-                @Override
-                public void onPreviewFrame(byte[] data, Camera camera)
-                {
-                    if ((mDrawOnTop == null) || mFinished)
-                        return;
+        synchronized (holder) {
+            try {
+                mCamera.setPreviewDisplay(holder);
+                mCamera.setPreviewCallback(new PreviewCallback() {
+                    @Override
+                    public void onPreviewFrame(byte[] data, Camera camera)
+                    {
+                        if ((mDrawOnTop == null) || mFinished)
+                            return;
 
-                    mDrawOnTop.invalidate();
-                }
-            });
-        } catch (IOException e) {
-            mCamera.release();
-            mCamera = null;
-            e.printStackTrace();
+                        mDrawOnTop.mSum = decodeYUV420sp(data);
+
+                        mDrawOnTop.invalidate();
+                    }
+                });
+            } catch (IOException e) {
+                mCamera.release();
+                mCamera = null;
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
-        CameraUtil.setOrientation(mCamera);
-        Camera.Parameters parameters = mCamera.getParameters();
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        mCamera.setParameters(parameters);
-        mCamera.startPreview();
+        synchronized (holder) {
+            CameraUtil.setOrientation(mCamera);
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            mCamera.setParameters(parameters);
+            mCamera.startPreview();
+        }
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        mFinished = true;
-        mCamera.setPreviewCallback(null);
-        mCamera.stopPreview();
-        mCamera.release();
-        mCamera = null;
+        synchronized (holder) {
+            mFinished = true;
+        }
     }
 
 }

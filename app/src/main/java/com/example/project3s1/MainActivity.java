@@ -2,6 +2,7 @@ package com.example.project3s1;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -10,21 +11,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.project3s1.util.CameraUtil;
+
 public class MainActivity extends AppCompatActivity
 {
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 1;
 
-    public native String stringFromJNI();
-
-    static {
-        System.loadLibrary("native-lib");
-    }
+    private Camera mCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
         if (isPermissionGranted()) {
             createPreview();
         } else {
@@ -32,11 +36,21 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        mCamera.setPreviewCallback(null);
+        mCamera.stopPreview();
+        mCamera.release();
+        mCamera = null;
+    }
+
     private void createPreview()
     {
         DrawOnTop drawOnTop = new DrawOnTop(this);
         drawOnTop.setWillNotDraw(false);
-        Preview preview = new Preview(this, drawOnTop);
+        Preview preview = new Preview(this, drawOnTop, mCamera = CameraUtil.getCameraInstance());
         setContentView(preview);
         addContentView(
                 drawOnTop,
