@@ -35,9 +35,14 @@ public class MainActivity extends AppCompatActivity
     private void createPreview()
     {
         DrawOnTop drawOnTop = new DrawOnTop(this);
+        drawOnTop.setWillNotDraw(false);
         Preview preview = new Preview(this, drawOnTop);
         setContentView(preview);
-        addContentView(drawOnTop, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        addContentView(
+                drawOnTop,
+                new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
     }
 
     private boolean isPermissionGranted()
@@ -97,5 +102,4 @@ public class MainActivity extends AppCompatActivity
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
     }
-
 }

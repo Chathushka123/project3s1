@@ -5,11 +5,11 @@ import android.hardware.Camera;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.example.project3s1.util.CameraUtil;
+
 import java.io.IOException;
 
 import static android.hardware.Camera.*;
-import static com.example.project3s1.util.CameraUtil.getCameraInstance;
-import static com.example.project3s1.util.CameraUtil.setOrientation;
 
 public class Preview extends SurfaceView implements SurfaceHolder.Callback
 {
@@ -24,22 +24,22 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback
 
         mDrawOnTop = drawOnTop;
         mFinished = false;
-
         mHolder = getHolder();
         mHolder.addCallback(this);
+        mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
-        mCamera = getCameraInstance();
+        mCamera = CameraUtil.getCameraInstance();
         try {
             mCamera.setPreviewDisplay(holder);
             mCamera.setPreviewCallback(new PreviewCallback() {
                 @Override
                 public void onPreviewFrame(byte[] data, Camera camera)
                 {
-                    if (mDrawOnTop == null || mFinished)
+                    if ((mDrawOnTop == null) || mFinished)
                         return;
 
                     mDrawOnTop.invalidate();
@@ -55,7 +55,7 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
-        setOrientation(mCamera);
+        CameraUtil.setOrientation(mCamera);
         Camera.Parameters parameters = mCamera.getParameters();
         parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         mCamera.setParameters(parameters);
@@ -71,4 +71,5 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.release();
         mCamera = null;
     }
+
 }

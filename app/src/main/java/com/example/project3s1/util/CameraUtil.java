@@ -8,7 +8,6 @@ import static com.example.project3s1.util.Debug.tag;
 public class CameraUtil
 {
     private static final int ORIENTATION = 90;
-    private static Camera camera = null;
 
     public static void setOrientation(Camera camera)
     {
@@ -17,12 +16,11 @@ public class CameraUtil
 
     public static Camera getCameraInstance()
     {
-        if (camera == null) {
-            try {
-                camera = Camera.open();
-            } catch (Exception e) {
-                Log.w(tag(new CameraUtil()), "getCameraInstance", e);
-            }
+        Camera camera = null;
+        try {
+            camera = Camera.open();
+        } catch (Exception e) {
+            Log.w(tag(new CameraUtil()), "getCameraInstance", e);
         }
         return camera;
     }
