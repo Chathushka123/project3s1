@@ -1,17 +1,19 @@
 package com.example.project3s1.util;
 
 import android.hardware.Camera;
+import android.os.Build;
 import android.util.Log;
 
 import static com.example.project3s1.util.DebugUtil.tag;
 
 public class CameraUtil
 {
-    private static final int ORIENTATION = 90;
-
     public static void setOrientation(Camera camera)
     {
-        camera.setDisplayOrientation(ORIENTATION);
+        int orientation = 90;
+        if (Build.MODEL.equals("Nexus 5X"))
+            orientation = 270;
+        camera.setDisplayOrientation(orientation);
     }
 
     public static Camera getCameraInstance()
