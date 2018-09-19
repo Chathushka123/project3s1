@@ -5,12 +5,26 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import static com.example.project3s1.util.DebugUtil.tag;
+
 public class DrawOnTop extends FrameLayout
 {
-    public int mSum = 0;
+    static {
+        System.loadLibrary("native-lib");
+    }
+
+    private native int[] decodeYUV420sp(byte[] yuv420sp, int dataLength, int width, int height);
+
+    public int[] mRgb;
+    public byte[] mYuv;
+    public int mDataLength;
+    public int mWidth;
+    public int mHeight;
+
     private Paint mPaintBlack;
 
     public DrawOnTop(Context context)
@@ -36,15 +50,24 @@ public class DrawOnTop extends FrameLayout
         mPaintBlack = new Paint();
         mPaintBlack.setStyle(Paint.Style.FILL);
         mPaintBlack.setColor(Color.BLACK);
-        mPaintBlack.setTextSize(25);
+        mPaintBlack.setTextSize(30);
+
         View view = inflate(getContext(), R.layout.draw_on_top, null);
         addView(view);
+
+        mRgb = null;
+        mYuv = null;
     }
 
     @Override
     protected void onDraw(Canvas canvas)
     {
-        canvas.drawText("" + mSum, 10-1, 30-1, mPaintBlack);
+        if (mYuv == null || mRgb == null)
+            return;
+        mRgb = decodeYUV420sp(mYuv, mDataLength, mWidth, mHeight);
+        if (mRgb == null)
+            return;
+        canvas.drawText("mRgb[0] = " + mRgb[0], 50, 50, mPaintBlack);
         super.onDraw(canvas);
     }
 }

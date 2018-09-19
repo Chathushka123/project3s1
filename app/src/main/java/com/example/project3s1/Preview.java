@@ -2,6 +2,7 @@ package com.example.project3s1;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -10,15 +11,10 @@ import com.example.project3s1.util.CameraUtil;
 import java.io.IOException;
 
 import static android.hardware.Camera.PreviewCallback;
+import static com.example.project3s1.util.DebugUtil.tag;
 
 public class Preview extends SurfaceView implements SurfaceHolder.Callback
 {
-    static {
-        System.loadLibrary("native-lib");
-    }
-
-    private native int decodeYUV420sp(byte[] yuv420sp);
-
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private DrawOnTop mDrawOnTop;
@@ -39,47 +35,49 @@ public class Preview extends SurfaceView implements SurfaceHolder.Callback
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
-        synchronized (holder) {
-            try {
-                mCamera.setPreviewDisplay(holder);
-                mCamera.setPreviewCallback(new PreviewCallback() {
-                    @Override
-                    public void onPreviewFrame(byte[] data, Camera camera)
-                    {
-                        if ((mDrawOnTop == null) || mFinished)
-                            return;
+        try {
+            mCamera.setPreviewDisplay(holder);
+            mCamera.setPreviewCallback(new PreviewCallback() {
+                @Override
+                public void onPreviewFrame(byte[] data, Camera camera)
+                {
+                    if ((mDrawOnTop == null) || mFinished)
+                        return;
 
-                        mDrawOnTop.mSum = decodeYUV420sp(data);
-
-                        mDrawOnTop.invalidate();
+                    if (mDrawOnTop.mRgb == null) {
+                        Camera.Size size = mCamera.getParameters().getPreviewSize();
+                        mDrawOnTop.mWidth = size.width;
+                        mDrawOnTop.mHeight = size.height;
+                        mDrawOnTop.mDataLength = data.length;
+                        mDrawOnTop.mYuv = new byte[data.length];
+                        mDrawOnTop.mRgb = new int[size.width * size.height];
                     }
-                });
-            } catch (IOException e) {
-                mCamera.release();
-                mCamera = null;
-                e.printStackTrace();
-            }
+                    System.arraycopy(data, 0, mDrawOnTop.mYuv, 0, data.length);
+
+                    mDrawOnTop.invalidate();
+                }
+            });
+        } catch (IOException e) {
+            mCamera.release();
+            mCamera = null;
+            e.printStackTrace();
         }
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
-        synchronized (holder) {
-            CameraUtil.setOrientation(mCamera);
-            Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-            mCamera.setParameters(parameters);
-            mCamera.startPreview();
-        }
+        CameraUtil.setOrientation(mCamera);
+        Camera.Parameters parameters = mCamera.getParameters();
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        mCamera.setParameters(parameters);
+        mCamera.startPreview();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder)
     {
-        synchronized (holder) {
-            mFinished = true;
-        }
+        mFinished = true;
     }
 
 }

@@ -1,14 +1,68 @@
 #include <jni.h>
+#include <stdlib.h>
 
-JNIEXPORT jint JNICALL
-Java_com_example_project3s1_Preview_decodeYUV420sp(JNIEnv* env,
+JNIEXPORT jintArray JNICALL
+Java_com_example_project3s1_DrawOnTop_decodeYUV420sp(JNIEnv* env,
                                                      jobject obj,
-                                                     jbyteArray yuv420sp)
+                                                     jbyteArray yuv420sp,
+                                                     jint data_length,
+                                                     jint w,
+                                                     jint h)
 {
-    jbyte tmp[10];
-    jint i, sum = 0;
-    (*env)->GetByteArrayRegion(env, yuv420sp, 0, 10, tmp);
-    for (i = 0; i < 10; i++)
-        sum += tmp[i];
-    return sum;
+    jint frame_size = w * h;
+    jint j, i;
+    jint yp = 0, uvp;
+    jint u = 0, v = 0;
+    jint y, y1192;
+    jint r, g, b;
+
+    jbyte *yuv420sp_data;
+    jint *rgb_data;
+    jintArray rgb;
+
+    yuv420sp_data = (jbyte *) malloc(data_length * sizeof(jbyte));
+    rgb_data = (jint *) malloc(frame_size * sizeof(jint));
+
+    if (yuv420sp_data == NULL || rgb_data == NULL)
+        return NULL;
+
+    rgb = (*env)->NewIntArray(env, frame_size);
+    if (rgb == NULL)
+        return NULL;
+
+    (*env)->GetByteArrayRegion(env, yuv420sp, 0, data_length, yuv420sp_data);
+
+    for (j = 0; j < h; j++) {
+        uvp = frame_size + (j >> 1) * w;
+        i = 0;
+        while (i < w) {
+            y = (0xFF & ((jint) yuv420sp_data[yp])) - 16;
+            if (y < 0)
+                y = 0;
+
+            if ((i & 1) == 0) {
+                v = (0xFF & yuv420sp_data[uvp++]) - 128;
+                u = (0xFF & yuv420sp_data[uvp++]) - 128;
+            }
+
+            y1192 = 1192 * y;
+            r = (y1192 + 1634);
+            g = (y1192 - 833 * v - 400 * u);
+            b = (y1192 + 2066 * u);
+
+            if (r < 0) r = 0; else if (r > 262143) r = 262143;
+            if (g < 0) g = 0; else if (g > 262143) g = 262143;
+            if (b < 0) b = 0; else if (b > 262143) b = 262143;
+
+            rgb_data[yp] = 0xff000000 | ((r << 6) & 0xff0000) | ((g >> 2) & 0xff00) | ((b >> 10) & 0xff);
+
+            i++;
+            yp++;
+        }
+    }
+    (*env)->SetIntArrayRegion(env, rgb, 0, frame_size, rgb_data);
+    free(yuv420sp_data);
+    free(rgb_data);
+
+    return rgb;
 }
