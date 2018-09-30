@@ -12,4 +12,40 @@ public class IMUtil
 
         return rgb;
     }
+
+    public static String findColour(int[] rgb){
+        String colour;
+        int r=rgb[0];
+        int g=rgb[1];
+        int b=rgb[2];
+
+        int max;
+
+        if(g>=b && g>=r){
+            max=g;
+        }
+        else if(b>=g && b>=r){
+            max=b;
+        }
+        else {
+            max=r;
+        }
+
+        /*switch(max){
+            case r :colour="red"; break;
+            case g :colour="grean"; break;
+            case b :colour="blue"; break;
+            default:colour="white";
+        }*/
+            if(max==r){
+                colour="red";
+            }
+            else if(max==g){
+                colour="grean";
+            }
+            else{
+                colour="blue";
+            }
+        return colour;
+    }
 }

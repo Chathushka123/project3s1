@@ -48,7 +48,7 @@ public class DrawOnTop extends FrameLayout
     {
         mPaintBlack = new Paint();
         mPaintBlack.setStyle(Paint.Style.FILL);
-        mPaintBlack.setColor(Color.BLACK);
+        mPaintBlack.setColor(Color.WHITE);
         mPaintBlack.setTextSize(30);
 
         View view = inflate(getContext(), R.layout.draw_on_top, null);
@@ -61,13 +61,19 @@ public class DrawOnTop extends FrameLayout
     @Override
     protected void onDraw(Canvas canvas)
     {
+
         if (mYuv == null || mRgb == null)
             return;
         mRgb = decodeYUV420sp(mYuv, mDataLength, mWidth, mHeight);
         if (mRgb == null)
             return;
-        int[] rgb = IMUtil.extractRgb(mRgb[0]);
-        canvas.drawText("r:" + rgb[0] + " g:" + rgb[1] + " b:" + rgb[2], 50, 50, mPaintBlack);
+        int[] rgb = IMUtil.extractRgb(mRgb[mDataLength/2]);
+        /*canvas.drawText("r:" + rgb[0] + " g:" + rgb[1] + " b:" + rgb[2], 50, 50, mPaintBlack);
+        super.onDraw(canvas);*/
+
+        String colour=IMUtil.findColour(rgb);
+
+        canvas.drawText(colour, mWidth/2,50, mPaintBlack);
         super.onDraw(canvas);
     }
 }
