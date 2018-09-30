@@ -5,11 +5,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import static com.example.project3s1.util.DebugUtil.tag;
+import com.example.project3s1.util.IMUtil;
 
 public class DrawOnTop extends FrameLayout
 {
@@ -67,7 +66,8 @@ public class DrawOnTop extends FrameLayout
         mRgb = decodeYUV420sp(mYuv, mDataLength, mWidth, mHeight);
         if (mRgb == null)
             return;
-        canvas.drawText("mRgb[0] = " + mRgb[0], 50, 50, mPaintBlack);
+        int[] rgb = IMUtil.extractRgb(mRgb[0]);
+        canvas.drawText("r:" + rgb[0] + " g:" + rgb[1] + " b:" + rgb[2], 50, 50, mPaintBlack);
         super.onDraw(canvas);
     }
 }
