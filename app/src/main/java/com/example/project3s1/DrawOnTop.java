@@ -67,13 +67,24 @@ public class DrawOnTop extends FrameLayout
         mRgb = decodeYUV420sp(mYuv, mDataLength, mWidth, mHeight);
         if (mRgb == null)
             return;
-        int[] rgb = IMUtil.extractRgb(mRgb[mDataLength/2]);
+
+
+        int[] rgb = new int[3];
+        if(mDataLength%2==0) {
+             rgb = IMUtil.extractRgb(mRgb[(mDataLength / 2)-(mWidth/2)]);
+        }
+
+        else{
+             rgb = IMUtil.extractRgb(mRgb[(mDataLength / 2)+1]);
+        }
+
+
         /*canvas.drawText("r:" + rgb[0] + " g:" + rgb[1] + " b:" + rgb[2], 50, 50, mPaintBlack);
         super.onDraw(canvas);*/
 
         String colour=IMUtil.findColour(rgb);
 
-        canvas.drawText(colour, mWidth/2,50, mPaintBlack);
+        canvas.drawText(colour, 50,50, mPaintBlack);
         super.onDraw(canvas);
     }
 }
