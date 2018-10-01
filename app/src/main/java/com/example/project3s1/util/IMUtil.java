@@ -15,11 +15,13 @@ public class IMUtil
 
     public static String findColour(int[] rgb){
         String colour;
-        int r=rgb[0];
-        int g=rgb[1];
-        int b=rgb[2];
+        int r=0; int g=0; int b=0;
 
-        int max;
+         r=rgb[0];
+         g=rgb[1];
+         b=rgb[2];
+
+        int max=0;
 
         if(g>=b && g>=r){
             max=g;
@@ -30,9 +32,9 @@ public class IMUtil
         else {
             max=r;
         }
-
-        /*switch(max){
-            case r :colour="red"; break;
+       /* int x=10;
+        switch(max){
+            case x :colour="red"; break;
             case g :colour="grean"; break;
             case b :colour="blue"; break;
             default:colour="white";
