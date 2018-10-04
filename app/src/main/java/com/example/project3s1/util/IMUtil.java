@@ -1,9 +1,12 @@
 package com.example.project3s1.util;
 
-public class IMUtil
-{
-    public static int[] extractRgb(int compressed)
-    {
+
+import android.database.DefaultDatabaseErrorHandler;
+
+import com.example.project3s1.constants.Colour;
+
+public class IMUtil {
+    public static int[] extractRgb(int compressed) {
         int[] rgb = new int[3];
 
         rgb[0] = (compressed >> 16) & 0xff;
@@ -13,48 +16,7 @@ public class IMUtil
         return rgb;
     }
 
-   /* public static String findColour1(int[] rgb){
-        String colour;
-        int r=0; int g=0; int b=0;
-
-         r=rgb[0];
-         g=rgb[1];
-         b=rgb[2];
-
-        int max=0;
-
-        if(g>=b && g>=r){
-            max=g;
-        }
-        else if(b>=g && b>=r){
-            max=b;
-        }
-        else {
-            max=r;
-        }
-        int x=10;
-        switch(max){
-            case x :colour="red"; break;
-            case g :colour="grean"; break;
-            case b :colour="blue"; break;
-            default:colour="white";
-        }
-            if(max==r){
-                colour="red";
-            }
-            else if(max==g){
-                colour="grean";
-            }
-            else{
-                colour="blue";
-            }
-        return colour;
-    }*/
-
-
-    public static int colourRound(int val)
-    {
-
+    public static int colourRound(int val) {
         if (val >= 0 && val < 64) {
             val = 0;
         } else if (val >= 64 && val < 192) {
@@ -63,12 +25,10 @@ public class IMUtil
             val = 255;
 
         }
-
         return val;
     }
 
-    public static String findColour(int[] rgb)
-    {
+  /*  public static String findColour(int[] rgb) {
         String colour = "no";
         int r = colourRound(rgb[0]);
         int g = colourRound(rgb[1]);
@@ -108,5 +68,39 @@ public class IMUtil
 
 
         return colour;
+    }*/
+
+    public static int hexValue(int[] rgb){
+
+      int r = colourRound(rgb[0]);
+      int g = colourRound(rgb[1]);
+      int b = colourRound(rgb[2]);
+      int hex;
+
+      hex = ((r & 0xff) << 16) + ((g & 0xff) << 8) + (b & 0xff);
+      return hex;
     }
+
+    public static String findColour(int[] rgb)
+    {
+      int hexValue=hexValue(rgb);
+
+      switch(hexValue){
+          case Colour.BLACK: return "BLACK";
+          case Colour.WHITE: return "WHITE";
+          case Colour.RED:   return "RED";
+          case Colour.LIME:  return "LIME";
+          case Colour.BLUE:  return "BLUE";
+          case Colour.YELLOW:return "YELLOW";
+          case Colour.CYAN:  return "CYAN";
+          case Colour.MAGENTA: return "MAGENTA";
+          case Colour.GRAY:  return "GRAY";
+          case Colour.MAROON:return "MAROON";
+          case Colour.OLIVE: return "OLIVE";
+          case Colour.GREEN: return "GREEN";
+          case Colour.PURPLE: return "PURPLE";
+          case Colour.TEAL:  return "TEAL";
+          case Colour.NAVY:  return "NAVY";
+      }
+  }
 }
