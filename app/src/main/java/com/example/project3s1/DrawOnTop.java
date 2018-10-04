@@ -83,6 +83,7 @@ public class DrawOnTop extends FrameLayout
 
         String colour=IMUtil.findColour(rgb);
 
+
         canvas.drawText(colour, 50,50, mPaintBlack);
         super.onDraw(canvas);
     }
