@@ -20,6 +20,7 @@ public class DrawOnTop extends FrameLayout
 
     public int[] mRgb;
     public byte[] mYuv;
+    int[] filterKernel=new int[9];
     public int mDataLength;
     public int mWidth;
     public int mHeight;
@@ -70,12 +71,63 @@ public class DrawOnTop extends FrameLayout
 
 
         int[] rgb = new int[3];
-        if(mDataLength%2==0) {
-             rgb = IMUtil.extractRgb(mRgb[(mDataLength / 2)-(mWidth/2)]);
+        if(mDataLength%2==0 && ((mWidth%2==0 && mHeight%2==0)|| mWidth%2!=0 && mHeight%2==0)){
+
+            int mid=((mDataLength / 2)-(mWidth/2));
+
+
+            filterKernel[0]= mRgb[mid-1];
+            filterKernel[1]=mRgb[mid];
+            filterKernel[2]=mRgb[mid+1];
+
+
+            mid=mid+mWidth;
+
+            filterKernel[3]=mRgb[mid-1];
+            filterKernel[4]=mRgb[mid];
+            filterKernel[5]=mRgb[mid+1];
+
+
+            mid=mid+mWidth;
+
+            filterKernel[6]=mRgb[mid-1];
+            filterKernel[7]=mRgb[mid];
+            filterKernel[8]=mRgb[mid+1];
+
+
+
+
+             rgb = IMUtil.extractFilterMask(filterKernel);
         }
 
         else{
-             rgb = IMUtil.extractRgb(mRgb[(mDataLength / 2)+1]);
+
+            int mid=(mDataLength/2);
+
+
+            filterKernel[0]= mRgb[mid-1];
+            filterKernel[1]=mRgb[mid];
+            filterKernel[2]=mRgb[mid+1];
+
+
+            mid=mid+mWidth;
+
+            filterKernel[3]=mRgb[mid-1];
+            filterKernel[4]=mRgb[mid];
+            filterKernel[5]=mRgb[mid+1];
+
+
+            mid=mid+mWidth;
+
+            filterKernel[6]=mRgb[mid-1];
+            filterKernel[7]=mRgb[mid];
+            filterKernel[8]=mRgb[mid+1];
+
+
+
+
+
+            rgb = IMUtil.extractFilterMask(filterKernel);
         }
 
 
@@ -86,5 +138,7 @@ public class DrawOnTop extends FrameLayout
 
         canvas.drawText(colour, 50,50, mPaintBlack);
         super.onDraw(canvas);
+
+
     }
 }

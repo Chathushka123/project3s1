@@ -16,14 +16,33 @@ public class IMUtil {
         return rgb;
     }
 
+    public static int[] extractFilterMask(int[] filter_kernel){
+        int[] rgb=new int[3];
+        int r=0;
+        int g=0;
+        int b=0;
 
+        for(int i=0;i<9;i++){
+            int[] extractRgb=extractRgb(filter_kernel[i]);
+            r += extractRgb[0];
+            g += extractRgb[1];
+            b += extractRgb[2];
+        }
+
+        rgb[0]=r/9;
+        rgb[1]=g/9;
+        rgb[2]=b/9;
+
+
+        return rgb;
+    }
 
 
     public static int colourRound(int val) {
 
-        if (val >= 0 && val < 64) {
+        if (val >= 0 && val <= 85) {
             val = 0;
-        } else if (val >= 64 && val < 192) {
+        } else if (val >= 86 && val <170) {
             val = 128;
         } else {
             val = 255;
@@ -33,47 +52,6 @@ public class IMUtil {
         return val;
     }
 
-  /*  public static String findColour(int[] rgb) {
-        String colour = "no";
-        int r = colourRound(rgb[0]);
-        int g = colourRound(rgb[1]);
-        int b = colourRound(rgb[2]);
-
-        if (r == 0 && g == 0 && b == 0) {
-            colour = "black";
-        } else if (r == 0 && g == 255 && b == 0) {
-            colour = "lime";
-        } else if (r == 0 && g == 0 && b == 255) {
-            colour = "blue";
-        } else if (r == 0 && g == 128 && b == 128) {
-            colour = "teal";
-        } else if (r == 0 && g == 0 && b == 128) {
-            colour = "navy";
-        } else if (r == 0 && g == 255 && b == 255) {
-            colour = "cyan";
-        } else if (r == 0 && g == 128 && b == 0) {
-            colour = "grean";
-        } else if (r == 128 && g == 128 && b == 128) {
-            colour = "gray";
-        } else if (r == 128 && g == 0 && b == 0) {
-            colour = "maroon";
-        } else if (r == 128 && g == 128 && b == 0) {
-            colour = "olive";
-        } else if (r == 128 && g == 0 && b == 128) {
-            colour = "purple";
-        } else if (r == 255 && g == 255 && b == 255) {
-            colour = "white";
-        } else if (r == 255 && g == 0 && b == 0) {
-            colour = "red";
-        } else if (r == 255 && g == 255 && b == 0) {
-            colour = "yellow";
-        } else if (r == 255 && g == 0 && b == 255) {
-            colour = "magenta";
-        }
-
-
-        return colour;
-    }*/
 
   public static int hexValue(int[] rgb){
 
