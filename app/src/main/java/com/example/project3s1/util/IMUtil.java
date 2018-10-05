@@ -52,45 +52,59 @@ public class IMUtil
     }*/
 
 
+    public static int colourRound(int val)
+    {
 
-    public static int colourRound(int val){
-
-        if(val>=0 && val<64){
-            val=0;
-        }
-        else if(val>=64 && val<192){
-            val=128;
-        }
-        else {
-            val=255;
+        if (val >= 0 && val < 64) {
+            val = 0;
+        } else if (val >= 64 && val < 192) {
+            val = 128;
+        } else {
+            val = 255;
 
         }
 
         return val;
     }
 
-    public static String findColour(int[] rgb){
-        String colour="no";
-        int r=colourRound(rgb[0]);
-        int g=colourRound(rgb[1]);
-        int b=colourRound(rgb[2]);
+    public static String findColour(int[] rgb)
+    {
+        String colour = "no";
+        int r = colourRound(rgb[0]);
+        int g = colourRound(rgb[1]);
+        int b = colourRound(rgb[2]);
 
-        if(r==0 && g==0 && b==0){colour="black";}
-        else if(r==0 && g==255 && b==0){colour="lime";}
-        else if(r==0 && g==0 && b==255){colour="blue";}
-        else if(r==0 && g==128 && b==128){colour="teal";}
-        else if(r==0 && g==0 && b==128){colour="navy";}
-        else if(r==0 && g==255 && b==255){colour="cyan";}
-        else if(r==0 && g==128 && b==0){colour="grean";}
-        else if(r==128 && g==128 && b==128){colour="gray";}
-        else if(r==128 && g==0 && b==0){colour="maroon";}
-        else if(r==128 && g==128 && b==0){colour="olive";}
-        else if(r==128 && g==0 && b==128){colour="purple";}
-        else if(r==255 && g==255 && b==255){colour="white";}
-        else if(r==255 && g==0 && b==0){colour="red";}
-        else if(r==255 && g==255 && b==0){colour="yellow";}
-        else if(r==255 && g==0 && b==255){colour="magenta";}
-
+        if (r == 0 && g == 0 && b == 0) {
+            colour = "black";
+        } else if (r == 0 && g == 255 && b == 0) {
+            colour = "lime";
+        } else if (r == 0 && g == 0 && b == 255) {
+            colour = "blue";
+        } else if (r == 0 && g == 128 && b == 128) {
+            colour = "teal";
+        } else if (r == 0 && g == 0 && b == 128) {
+            colour = "navy";
+        } else if (r == 0 && g == 255 && b == 255) {
+            colour = "cyan";
+        } else if (r == 0 && g == 128 && b == 0) {
+            colour = "grean";
+        } else if (r == 128 && g == 128 && b == 128) {
+            colour = "gray";
+        } else if (r == 128 && g == 0 && b == 0) {
+            colour = "maroon";
+        } else if (r == 128 && g == 128 && b == 0) {
+            colour = "olive";
+        } else if (r == 128 && g == 0 && b == 128) {
+            colour = "purple";
+        } else if (r == 255 && g == 255 && b == 255) {
+            colour = "white";
+        } else if (r == 255 && g == 0 && b == 0) {
+            colour = "red";
+        } else if (r == 255 && g == 255 && b == 0) {
+            colour = "yellow";
+        } else if (r == 255 && g == 0 && b == 255) {
+            colour = "magenta";
+        }
 
 
         return colour;
