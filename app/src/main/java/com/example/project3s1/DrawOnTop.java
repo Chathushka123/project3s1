@@ -93,9 +93,7 @@ public class DrawOnTop extends FrameLayout
             filterKernel[6]=mRgb[mid-1];
             filterKernel[7]=mRgb[mid];
             filterKernel[8]=mRgb[mid+1];
-
-
-
+            
 
              rgb = IMUtil.extractFilterMask(filterKernel);
         }
