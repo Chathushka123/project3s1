@@ -1,5 +1,12 @@
 #include <jni.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <android/log.h>
+#include <android/bitmap.h>
+
+#define  LOG_TAG "native-lib"
+#define  LOGD(...) __android_log_print(ANDROID_LOG_DEBUG,LOG_TAG,__VA_ARGS__)
+
 
 void decode_yuv420sp(jint *rgb, jbyte *yuv420sp, jint w, jint h)
 {
@@ -38,6 +45,60 @@ void decode_yuv420sp(jint *rgb, jbyte *yuv420sp, jint w, jint h)
             yp++;
         }
     }
+}
+
+jobject fill_bitmap(JNIEnv * env, jint *rgb, jint length, jobject bitmap)
+{
+    AndroidBitmapInfo info;
+    int rc;
+    void *pixels_tmp;
+    uint32_t *pixels;
+    jint i;
+
+    rc = AndroidBitmap_getInfo(env, bitmap, &info);
+    if (rc < 0) {
+        return NULL;
+    }
+    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        return NULL;
+    }
+    rc = AndroidBitmap_lockPixels(env, bitmap, &pixels_tmp);
+    if (rc < 0) {
+        return NULL;
+    }
+    pixels = (uint32_t *) pixels_tmp;
+    for (i = 0; i < length; i++) {
+        pixels[i++] = 0x1E02F000;
+    }
+    AndroidBitmap_unlockPixels(env, bitmap);
+    return bitmap;
+}
+
+JNIEXPORT jobject JNICALL
+Java_com_example_project3s1_DrawOnTop_fillBitmap(JNIEnv *env,
+                                                 jobject instance,
+                                                 jbyteArray yuv420sp,
+                                                 jint data_length,
+                                                 jint w,
+                                                 jint h,
+                                                 jobject bitmap)
+{
+    jint frame_size = w * h;
+    jbyte *yuv420sp_data;
+    jint *rgb_data;
+
+    yuv420sp_data = (jbyte *) malloc(data_length * sizeof(jbyte));
+    rgb_data = (jint *) malloc(frame_size * sizeof(jint));
+
+    if (yuv420sp_data == NULL || rgb_data == NULL)
+        return NULL;
+    (*env)->GetByteArrayRegion(env, yuv420sp, 0, data_length, yuv420sp_data);
+    decode_yuv420sp(rgb_data, yuv420sp_data, w, h);
+
+    bitmap = fill_bitmap(env, rgb_data, frame_size, bitmap);
+    free(yuv420sp_data);
+    free(rgb_data);
+    return bitmap;
 }
 
 JNIEXPORT jintArray JNICALL
