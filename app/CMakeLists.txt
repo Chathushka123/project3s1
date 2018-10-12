@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.4.1)
 # automatically packages shared libraries with your APK.
 
 find_library( log-lib log )
+find_library( jnigraphics-lib jnigraphics )
 
 add_library( # Specifies the name of the library.
              native-lib
@@ -21,4 +22,4 @@ add_library( # Specifies the name of the library.
              # Provides a relative path to your source file(s).
              src/main/c/native-lib.c )
 
-target_link_libraries( native-lib ${log-lib} )
+target_link_libraries( native-lib ${log-lib} ${jnigraphics-lib} )
