@@ -13,6 +13,8 @@ import android.widget.FrameLayout;
 
 import com.example.project3s1.util.DebugUtil;
 
+import static com.example.project3s1.util.DebugUtil.tag;
+
 public class DrawOnTop extends FrameLayout
 {
     static {
